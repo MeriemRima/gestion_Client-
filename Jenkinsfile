@@ -40,9 +40,9 @@ pipeline {
                     ./mvnw -q -DskipTests sonar:sonar \
                     -Dsonar.login=$SONAR_TOKEN \
                     -Dsonar.host.url=https://sonarcloud.io
-                 '''
-                }
-              }
+                 '''
+                }
+            }
         }
 
         stage('Docker Build & Push') {
