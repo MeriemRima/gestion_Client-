@@ -2,13 +2,12 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = 'docker-creds'      // Jenkins credential ID for Docker registry
-        DOCKER_IMAGE = "mydockerhubuser/gestion-client"   // Docker image name
-        SONARQUBE = 'SonarQube'                  // SonarQube server ID in Jenkins
+        DOCKER_CREDENTIALS = 'docker-creds'                    // Jenkins credential ID for Docker registry
+        DOCKER_IMAGE = "mydockerhubuser/gestion-client"        // Docker image name
+        SONARQUBE = 'SonarQube'                                // SonarQube server ID in Jenkins
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/<your-repo>.git'
@@ -33,14 +32,19 @@ pipeline {
         }
 
         stage('SonarCloud Analysis') {
-            agent { docker { image 'maven:3.9-eclipse-temurin-21'; args '-v $HOME/.m2:/root/.m2' } }
+            agent { 
+                docker { 
+                    image 'maven:3.9-eclipse-temurin-21'
+                    args '-v $HOME/.m2:/root/.m2' 
+                } 
+            }
             steps {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                sh '''
-                    ./mvnw -q -DskipTests sonar:sonar \
-                    -Dsonar.login=$SONAR_TOKEN \
-                    -Dsonar.host.url=https://sonarcloud.io
-                 '''
+                    sh '''
+                        ./mvnw -q -DskipTests sonar:sonar \
+                        -Dsonar.login=$SONAR_TOKEN \
+                        -Dsonar.host.url=https://sonarcloud.io
+                    '''
                 }
             }
         }
